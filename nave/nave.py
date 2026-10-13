@@ -1,4 +1,5 @@
 import math
+from pathlib import Path
 
 import pygame
 
@@ -9,10 +10,18 @@ from municiones.parabolica import MunicionParabolica
 
 class Nave:
     def __init__(self, ancho_mapa, alto_mapa):
-        self.ancho = 40
-        self.alto = 48
+        ruta_imagen = Path(__file__).resolve().parent.parent / "assets" / "nave.png"
+        imagen = pygame.image.load(str(ruta_imagen))
+        regiones = pygame.mask.from_surface(imagen).get_bounding_rects()
+        area_nave = max(regiones, key=lambda rect: rect.width * rect.height)
+        imagen = imagen.subsurface(area_nave)
+        self.ancho = 72
+        self.alto = round(self.ancho * area_nave.height / area_nave.width)
         if ancho_mapa < self.ancho or alto_mapa < self.alto:
             raise ValueError("El mapa debe ser suficientemente grande para la nave")
+        self.imagen = pygame.transform.smoothscale(
+            imagen, (self.ancho, self.alto)
+        )
         self.ancho_mapa = ancho_mapa
         self.alto_mapa = alto_mapa
         self.x = (ancho_mapa - self.ancho) / 2
@@ -25,7 +34,7 @@ class Nave:
         self.municiones_parabolicas = []
         self.maximo_parabolicas = 3
         self.cargas_parabolicas = self.maximo_parabolicas
-        self.cooldown_parabolica = 10
+        self.cooldown_parabolica = 5
         self.tiempo_recarga_parabolica = 0
         self.recargando_parabolicas = False
         self.tecla_parabolica_pulsada = False
@@ -126,30 +135,7 @@ class Nave:
             municion.dibujar(pantalla)
         if not self.viva:
             return
-        x = round(self.x)
-        y = round(self.y)
-        pygame.draw.polygon(
-            pantalla,
-            (80, 190, 240),
-            [
-                (x + 20, y),
-                (x + 40, y + 42),
-                (x + 27, y + 36),
-                (x + 27, y + 48),
-                (x + 13, y + 48),
-                (x + 13, y + 36),
-                (x, y + 42),
-            ],
-        )
-        pygame.draw.polygon(
-            pantalla,
-            (220, 245, 255),
-            [
-                (x + 20, y + 10),
-                (x + 26, y + 28),
-                (x + 14, y + 28),
-            ],
-        )
+        pantalla.blit(self.imagen, self.rect)
 
     def dibujar_vida(self, pantalla):
         ancho_barra = min(160, self.ancho_mapa - 20)

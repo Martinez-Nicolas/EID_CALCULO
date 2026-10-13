@@ -88,9 +88,9 @@ class LanzadorConica:
             municion.dibujar(pantalla)
 
     def dibujar_recarga(self, pantalla):
-        ancho_barra = 160
-        pygame.draw.rect(pantalla, (60, 60, 70), (10, 28, ancho_barra, 8))
+        ancho_barra = min(160, pantalla.get_width() - 20)
+        pygame.draw.rect(pantalla, (60, 60, 70), (10, 58, ancho_barra, 8))
         ancho_carga = round(ancho_barra * self.carga)
         if ancho_carga > 0:
-            color = (255, 140, 60) if not self.disponible else (255, 230, 120)
-            pygame.draw.rect(pantalla, color, (10, 28, ancho_carga, 8))
+            color = (150, 90, 220) if not self.disponible else (210, 160, 255)
+            pygame.draw.rect(pantalla, color, (10, 58, ancho_carga, 8))
