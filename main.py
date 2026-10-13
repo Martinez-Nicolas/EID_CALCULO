@@ -2,6 +2,7 @@ import sys
 import pygame
 from config import ANCHO, ALTO, FPS, TITULO, COLOR_FONDO
 from nucleo.mapa import Mapa
+from nave.nave import Nave
 
 
 def main():
@@ -10,6 +11,7 @@ def main():
     pygame.display.set_caption(TITULO)
     reloj = pygame.time.Clock()
     mapa = Mapa(ANCHO, ALTO)
+    nave = Nave(ANCHO, ALTO)
 
     ejecutando = True
     while ejecutando:
@@ -21,8 +23,12 @@ def main():
             elif evento.type == pygame.KEYDOWN and evento.key == pygame.K_ESCAPE:
                 ejecutando = False
 
+        nave.actualizar(pygame.key.get_pressed(), dt)
+
         pantalla.fill(COLOR_FONDO)
         mapa.dibujar(pantalla)
+        nave.dibujar(pantalla)
+        nave.dibujar_vida(pantalla)
         pygame.display.flip()
 
     pygame.quit()
