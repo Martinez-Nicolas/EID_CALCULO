@@ -3,6 +3,7 @@ import math
 import pygame
 
 from municiones.basica import MunicionBasica
+from municiones.conica import LanzadorConica
 
 
 class Nave:
@@ -19,6 +20,7 @@ class Nave:
         self.vida_maxima = 100
         self.vida = self.vida_maxima
         self.municiones_basicas = []
+        self.lanzador_conica = LanzadorConica()
         self.dano_por_enemigo = {
             "enemigo1": 20,
             "enemigo2": 35,
@@ -42,11 +44,12 @@ class Nave:
         self.municiones_basicas = [
             municion for municion in self.municiones_basicas if municion.activa
         ]
+        self.lanzador_conica.actualizar(tiempo_transcurrido)
         if not self.viva:
             return
         direccion_x = int(teclas[pygame.K_RIGHT]) - int(teclas[pygame.K_LEFT])
         direccion_y = int(teclas[pygame.K_DOWN]) - int(teclas[pygame.K_UP])
-        longitud = math.sqrt(direccion_x ** 2 + direccion_y ** 2)
+        longitud = math.sqrt(direccion_x**2 + direccion_y**2)
         if longitud > 0:
             distancia = self.velocidad * tiempo_transcurrido
             self.x += direccion_x / longitud * distancia
@@ -55,6 +58,8 @@ class Nave:
         self.y = max(0, min(self.y, self.alto_mapa - self.alto))
         if teclas[pygame.K_SPACE]:
             self.disparar_basica()
+        if teclas[pygame.K_c]:
+            self.lanzador_conica.disparar(self.x + self.ancho / 2, self.y)
 
     def disparar_basica(self):
         if not self.viva:
@@ -70,24 +75,33 @@ class Nave:
     def dibujar(self, pantalla):
         for municion in self.municiones_basicas:
             municion.dibujar(pantalla)
+        self.lanzador_conica.dibujar(pantalla)
         if not self.viva:
             return
         x = round(self.x)
         y = round(self.y)
-        pygame.draw.polygon(pantalla, (80, 190, 240), [
-            (x + 20, y),
-            (x + 40, y + 42),
-            (x + 27, y + 36),
-            (x + 27, y + 48),
-            (x + 13, y + 48),
-            (x + 13, y + 36),
-            (x, y + 42),
-        ])
-        pygame.draw.polygon(pantalla, (220, 245, 255), [
-            (x + 20, y + 10),
-            (x + 26, y + 28),
-            (x + 14, y + 28),
-        ])
+        pygame.draw.polygon(
+            pantalla,
+            (80, 190, 240),
+            [
+                (x + 20, y),
+                (x + 40, y + 42),
+                (x + 27, y + 36),
+                (x + 27, y + 48),
+                (x + 13, y + 48),
+                (x + 13, y + 36),
+                (x, y + 42),
+            ],
+        )
+        pygame.draw.polygon(
+            pantalla,
+            (220, 245, 255),
+            [
+                (x + 20, y + 10),
+                (x + 26, y + 28),
+                (x + 14, y + 28),
+            ],
+        )
 
     def dibujar_vida(self, pantalla):
         ancho_barra = min(160, self.ancho_mapa - 20)
@@ -95,3 +109,4 @@ class Nave:
         pygame.draw.rect(pantalla, (60, 60, 70), (10, 10, ancho_barra, 12))
         if ancho_vida > 0:
             pygame.draw.rect(pantalla, (60, 210, 100), (10, 10, ancho_vida, 12))
+        self.lanzador_conica.dibujar_recarga(pantalla)
