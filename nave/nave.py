@@ -2,6 +2,8 @@ import math
 
 import pygame
 
+from municiones.basica import MunicionBasica
+
 
 class Nave:
     def __init__(self, ancho_mapa, alto_mapa):
@@ -16,6 +18,7 @@ class Nave:
         self.velocidad = 300
         self.vida_maxima = 100
         self.vida = self.vida_maxima
+        self.municiones_basicas = []
         self.dano_por_enemigo = {
             "enemigo1": 20,
             "enemigo2": 35,
@@ -32,7 +35,14 @@ class Nave:
         return pygame.Rect(round(self.x), round(self.y), self.ancho, self.alto)
 
     def actualizar(self, teclas, tiempo_transcurrido):
-        if not self.viva or tiempo_transcurrido <= 0:
+        if tiempo_transcurrido <= 0:
+            return
+        for municion in self.municiones_basicas:
+            municion.actualizar(tiempo_transcurrido)
+        self.municiones_basicas = [
+            municion for municion in self.municiones_basicas if municion.activa
+        ]
+        if not self.viva:
             return
         direccion_x = int(teclas[pygame.K_RIGHT]) - int(teclas[pygame.K_LEFT])
         direccion_y = int(teclas[pygame.K_DOWN]) - int(teclas[pygame.K_UP])
@@ -43,12 +53,23 @@ class Nave:
             self.y += direccion_y / longitud * distancia
         self.x = max(0, min(self.x, self.ancho_mapa - self.ancho))
         self.y = max(0, min(self.y, self.alto_mapa - self.alto))
+        if teclas[pygame.K_SPACE]:
+            self.disparar_basica()
+
+    def disparar_basica(self):
+        if not self.viva:
+            return None
+        municion = MunicionBasica(self.x + self.ancho / 2, self.y)
+        self.municiones_basicas.append(municion)
+        return municion
 
     def recibir_impacto(self, tipo_enemigo):
         dano = self.dano_por_enemigo[tipo_enemigo]
         self.vida = max(0, self.vida - dano)
 
     def dibujar(self, pantalla):
+        for municion in self.municiones_basicas:
+            municion.dibujar(pantalla)
         if not self.viva:
             return
         x = round(self.x)
