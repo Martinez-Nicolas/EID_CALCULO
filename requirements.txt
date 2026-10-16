@@ -1,6 +1,1 @@
-# Juego (se importa como `import pygame`)
-pygame-ce>=2.5.8
-
-# Scripts de extracción de sprites (Claude outputs/extraer_sprites.py)
-numpy>=2.0
-opencv-python>=4.10
+pygame>=2.6.1
