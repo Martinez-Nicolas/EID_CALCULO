@@ -33,7 +33,8 @@ class GestorOleadas:
     def armar_cola(self, composicion):
         cola = []
         for tipo, cantidad in composicion.items():
-            cola.extend([tipo] * cantidad)
+            if tipo in self.fabricas:
+                cola.extend([tipo] * cantidad)
         random.shuffle(cola)
         return cola
 
@@ -42,7 +43,7 @@ class GestorOleadas:
         if self.indice < len(OLEADAS):
             self.pendientes = self.armar_cola(OLEADAS[self.indice])
             self.estado = "oleada"
-        elif self.indice == len(OLEADAS):
+        elif self.indice == len(OLEADAS) and "jefe" in self.fabricas:
             self.pendientes = ["jefe"] + self.armar_cola(JEFE_ACOMPANANTES)
             self.estado = "jefe"
         else:
