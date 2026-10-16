@@ -49,9 +49,7 @@ class Enemigo1:
     def calcular_y(self, x):
         return self.amplitud * math.sin(self.frecuencia * x + self.fase) + self.altura_central
 
-    def actualizar(self, tiempo_transcurrido, otros_enemigos=()):
-        if not self.vivo or tiempo_transcurrido <= 0:
-            return
+    def calcular_movimiento(self, tiempo_transcurrido):
         nueva_x = self.x + self.direccion * self.velocidad * tiempo_transcurrido
         if nueva_x <= 0:
             nueva_x = 0
@@ -59,10 +57,17 @@ class Enemigo1:
         elif nueva_x >= self.ancho_mapa - self.ancho:
             nueva_x = self.ancho_mapa - self.ancho
             self.direccion = -1
-        nueva_y = self.calcular_y(nueva_x)
+        return nueva_x, self.calcular_y(nueva_x)
+
+    def actualizar(self, tiempo_transcurrido, otros_enemigos=()):
+        if not self.vivo or tiempo_transcurrido <= 0:
+            return
+        nueva_x, nueva_y = self.calcular_movimiento(tiempo_transcurrido)
         if self.choca_con(nueva_x, nueva_y, otros_enemigos):
             self.direccion *= -1
-            return
+            nueva_x, nueva_y = self.calcular_movimiento(tiempo_transcurrido)
+            if self.choca_con(nueva_x, nueva_y, otros_enemigos):
+                return
         self.x = nueva_x
         self.y = nueva_y
 

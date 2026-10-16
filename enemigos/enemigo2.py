@@ -51,9 +51,7 @@ class Enemigo2:
     def calcular_x(self, y):
         return self.amplitud * math.sin(self.frecuencia * y + self.fase) + self.columna_central
 
-    def actualizar(self, tiempo_transcurrido, otros_enemigos=()):
-        if not self.vivo or tiempo_transcurrido <= 0:
-            return
+    def calcular_movimiento(self, tiempo_transcurrido):
         nueva_y = self.y + self.direccion * self.velocidad * tiempo_transcurrido
         if nueva_y <= self.y_minima:
             nueva_y = self.y_minima
@@ -61,10 +59,17 @@ class Enemigo2:
         elif nueva_y >= self.y_maxima:
             nueva_y = self.y_maxima
             self.direccion = -1
-        nueva_x = self.calcular_x(nueva_y)
+        return self.calcular_x(nueva_y), nueva_y
+
+    def actualizar(self, tiempo_transcurrido, otros_enemigos=()):
+        if not self.vivo or tiempo_transcurrido <= 0:
+            return
+        nueva_x, nueva_y = self.calcular_movimiento(tiempo_transcurrido)
         if self.choca_con(nueva_x, nueva_y, otros_enemigos):
             self.direccion *= -1
-            return
+            nueva_x, nueva_y = self.calcular_movimiento(tiempo_transcurrido)
+            if self.choca_con(nueva_x, nueva_y, otros_enemigos):
+                return
         self.x = nueva_x
         self.y = nueva_y
 

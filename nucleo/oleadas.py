@@ -57,7 +57,13 @@ class GestorOleadas:
         else:
             x = random.randint(MARGEN_APARICION, ANCHO - MARGEN_APARICION)
         y = -ALTURA_APARICION
-        self.enemigos.append(self.fabricas[tipo](x, y))
+        enemigo = self.fabricas[tipo](x, y)
+        rect_aparicion = enemigo.rect.inflate(enemigo.separacion, enemigo.separacion)
+        for otro in self.enemigos:
+            if otro.vivo and rect_aparicion.colliderect(otro.rect):
+                return False
+        self.enemigos.append(enemigo)
+        return True
 
     def mantener_dentro(self, enemigo):
         if enemigo in self.ingresados:
@@ -72,7 +78,8 @@ class GestorOleadas:
         self.temporizador += dt
         if self.pendientes and self.temporizador >= INTERVALO_APARICION:
             self.temporizador = 0.0
-            self.aparecer(self.pendientes.pop(0))
+            if self.aparecer(self.pendientes[0]):
+                self.pendientes.pop(0)
 
         for enemigo in self.enemigos:
             enemigo.actualizar(dt, self.enemigos)
