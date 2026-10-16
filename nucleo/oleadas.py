@@ -74,7 +74,7 @@ class GestorOleadas:
             self.aparecer(self.pendientes.pop(0))
 
         for enemigo in self.enemigos:
-            enemigo.actualizar(dt)
+            enemigo.actualizar(dt, self.enemigos)
             self.mantener_dentro(enemigo)
 
         self.enemigos = [e for e in self.enemigos if e.vida > 0]
