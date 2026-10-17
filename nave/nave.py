@@ -3,6 +3,12 @@ from pathlib import Path
 
 import pygame
 
+from config import (
+    COOLDOWN_PARABOLICA,
+    DANO_ENEMIGOS,
+    MAXIMO_PARABOLICAS,
+    VIDA_NAVE,
+)
 from municiones.basica import MunicionBasica
 from municiones.conica import LanzadorConica
 from municiones.parabolica import MunicionParabolica
@@ -27,23 +33,18 @@ class Nave:
         self.x = (ancho_mapa - self.ancho) / 2
         self.y = max(0, alto_mapa - self.alto - 20)
         self.velocidad = 300
-        self.vida_maxima = 100
+        self.vida_maxima = VIDA_NAVE
         self.vida = self.vida_maxima
         self.municiones_basicas = []
         self.lanzador_conica = LanzadorConica()
         self.municiones_parabolicas = []
-        self.maximo_parabolicas = 3
+        self.maximo_parabolicas = MAXIMO_PARABOLICAS
         self.cargas_parabolicas = self.maximo_parabolicas
-        self.cooldown_parabolica = 5
+        self.cooldown_parabolica = COOLDOWN_PARABOLICA
         self.tiempo_recarga_parabolica = 0
         self.recargando_parabolicas = False
         self.tecla_parabolica_pulsada = False
-        self.dano_por_enemigo = {
-            "enemigo1": 20,
-            "enemigo2": 35,
-            "enemigo3": 50,
-            "jefe": 100,
-        }
+        self.dano_por_enemigo = DANO_ENEMIGOS.copy()
 
     @property
     def viva(self):

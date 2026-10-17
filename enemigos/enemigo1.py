@@ -3,6 +3,8 @@ from pathlib import Path
 
 import pygame
 
+from config import DANO_MUNICIONES, VIDA_ENEMIGOS
+
 
 class Enemigo1:
     def __init__(self, ancho_mapa, alto_mapa, x_inicial, altura_central, fase=0, direccion=1):
@@ -30,13 +32,9 @@ class Enemigo1:
         self.direccion = 1 if direccion >= 0 else -1
         self.separacion = 10
         self.velocidad = 120
-        self.vida_maxima = 30
+        self.vida_maxima = VIDA_ENEMIGOS[self.tipo]
         self.vida = self.vida_maxima
-        self.dano_por_municion = {
-            "basica": 10,
-            "parabolica": 20,
-            "conica": 30,
-        }
+        self.dano_por_municion = DANO_MUNICIONES.copy()
 
     @property
     def vivo(self):

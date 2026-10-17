@@ -7,6 +7,28 @@ COLOR_FONDO = (10, 10, 30)
 COLOR_BORDE = (200, 200, 220)
 GROSOR_BORDE = 2
 
+VIDA_NAVE = 100
+DANO_ENEMIGOS = {
+    "enemigo1": 20,
+    "enemigo2": 35,
+    "enemigo3": 50,
+    "jefe": 100,
+}
+DANO_MUNICIONES = {
+    "basica": 10,
+    "parabolica": 20,
+    "conica": 30,
+}
+VIDA_ENEMIGOS = {
+    "enemigo1": 30,
+    "enemigo2": 60,
+    "enemigo3": 90,
+    "jefe": 180,
+}
+
+MAXIMO_PARABOLICAS = 3
+COOLDOWN_PARABOLICA = 10.0
+
 MARGEN_APARICION = 40
 ALTURA_APARICION = 60
 INTERVALO_APARICION = 1.0
