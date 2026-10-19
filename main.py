@@ -3,6 +3,8 @@ import pygame
 from config import ANCHO, ALTO, FPS, TITULO, COLOR_FONDO
 from enemigos.enemigo1 import Enemigo1
 from enemigos.enemigo2 import Enemigo2
+from enemigos.enemigo3 import Enemigo3
+from enemigos.jefe import Jefe
 from nucleo.colisiones import GestorColisiones
 from nucleo.mapa import Mapa
 from nucleo.oleadas import GestorOleadas
@@ -19,6 +21,8 @@ def main():
     fabricas = {
         1: lambda x, y: Enemigo1(ANCHO, ALTO, x, 170),
         2: lambda x, y: Enemigo2(ANCHO, ALTO, x),
+        3: lambda x, y: Enemigo3(ANCHO, ALTO, x, 120),
+        "jefe": lambda x, y: Jefe(ANCHO, ALTO),
     }
     gestor_oleadas = GestorOleadas(mapa, fabricas)
     gestor_colisiones = GestorColisiones()
