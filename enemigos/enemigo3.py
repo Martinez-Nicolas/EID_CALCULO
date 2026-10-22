@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pygame
 
-from config import DANO_MUNICIONES, VIDA_ENEMIGOS
+from config import IMPACTOS_PARA_ELIMINAR, VIDA_ENEMIGOS
 
 
 class Enemigo3:
@@ -38,7 +38,13 @@ class Enemigo3:
         self.velocidad = 150
         self.vida_maxima = VIDA_ENEMIGOS[self.tipo]
         self.vida = self.vida_maxima
-        self.dano_por_municion = DANO_MUNICIONES.copy()
+        self.dano_por_municion = self.calcular_dano_por_municion()
+
+    def calcular_dano_por_municion(self):
+        dano_por_municion = {}
+        for tipo_municion, impactos in IMPACTOS_PARA_ELIMINAR[self.tipo].items():
+            dano_por_municion[tipo_municion] = math.ceil(self.vida_maxima / impactos)
+        return dano_por_municion
 
     @property
     def vivo(self):

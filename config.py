@@ -14,10 +14,11 @@ DANO_ENEMIGOS = {
     "enemigo3": 50,
     "jefe": 100,
 }
-DANO_MUNICIONES = {
-    "basica": 10,
-    "parabolica": 20,
-    "conica": 30,
+IMPACTOS_PARA_ELIMINAR = {
+    "enemigo1": {"basica": 3, "parabolica": 2, "conica": 1},
+    "enemigo2": {"basica": 6, "parabolica": 3, "conica": 2},
+    "enemigo3": {"basica": 9, "parabolica": 5, "conica": 3},
+    "jefe": {"basica": 18, "parabolica": 9, "conica": 4},
 }
 VIDA_ENEMIGOS = {
     "enemigo1": 30,
