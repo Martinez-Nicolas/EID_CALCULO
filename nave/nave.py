@@ -55,8 +55,9 @@ class Nave:
         return pygame.Rect(round(self.x), round(self.y), self.ancho, self.alto)
 
     def actualizar(self, teclas, tiempo_transcurrido):
+        disparos = []
         if tiempo_transcurrido <= 0:
-            return
+            return disparos
         for municion in self.municiones_basicas:
             municion.actualizar(tiempo_transcurrido)
         self.municiones_basicas = [
@@ -69,7 +70,7 @@ class Nave:
             municion for municion in self.municiones_parabolicas if municion.activa
         ]
         if not self.viva:
-            return
+            return disparos
         self.actualizar_recarga_parabolica(tiempo_transcurrido)
         direccion_x = int(teclas[pygame.K_RIGHT]) - int(teclas[pygame.K_LEFT])
         direccion_y = int(teclas[pygame.K_DOWN]) - int(teclas[pygame.K_UP])
@@ -81,12 +82,16 @@ class Nave:
         self.x = max(0, min(self.x, self.ancho_mapa - self.ancho))
         self.y = max(0, min(self.y, self.alto_mapa - self.alto))
         if teclas[pygame.K_SPACE]:
-            self.disparar_basica()
+            if self.disparar_basica():
+                disparos.append("basica")
         if teclas[pygame.K_c]:
-            self.lanzador_conica.disparar(self.x + self.ancho / 2, self.y)
+            if self.lanzador_conica.disparar(self.x + self.ancho / 2, self.y):
+                disparos.append("conica")
         if teclas[pygame.K_x] and not self.tecla_parabolica_pulsada:
-            self.disparar_parabolica()
+            if self.disparar_parabolica():
+                disparos.append("parabolica")
         self.tecla_parabolica_pulsada = bool(teclas[pygame.K_x])
+        return disparos
 
     def disparar_basica(self):
         if not self.viva:

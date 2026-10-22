@@ -15,10 +15,10 @@ DANO_ENEMIGOS = {
     "jefe": 100,
 }
 IMPACTOS_PARA_ELIMINAR = {
-    "enemigo1": {"basica": 3, "parabolica": 2, "conica": 1},
-    "enemigo2": {"basica": 6, "parabolica": 3, "conica": 2},
-    "enemigo3": {"basica": 9, "parabolica": 5, "conica": 3},
-    "jefe": {"basica": 18, "parabolica": 9, "conica": 4},
+    "enemigo1": {"basica": 30, "parabolica": 2, "conica": 1},
+    "enemigo2": {"basica": 60, "parabolica": 3, "conica": 2},
+    "enemigo3": {"basica": 90, "parabolica": 5, "conica": 3},
+    "jefe": {"basica": 180, "parabolica": 9, "conica": 4},
 }
 VIDA_ENEMIGOS = {
     "enemigo1": 30,
