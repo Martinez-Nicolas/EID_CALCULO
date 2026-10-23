@@ -6,6 +6,8 @@ import pygame
 from config import (
     COOLDOWN_PARABOLICA,
     DANO_ENEMIGOS,
+    DURACION_DESTELLO_DANO,
+    INTERVALO_DISPARO_BASICO,
     MAXIMO_PARABOLICAS,
     VIDA_NAVE,
 )
@@ -28,6 +30,8 @@ class Nave:
         self.imagen = pygame.transform.smoothscale(
             imagen, (self.ancho, self.alto)
         )
+        self.imagen_dano = self.imagen.copy()
+        self.imagen_dano.fill((255, 70, 70), special_flags=pygame.BLEND_RGB_MULT)
         self.ancho_mapa = ancho_mapa
         self.alto_mapa = alto_mapa
         self.x = (ancho_mapa - self.ancho) / 2
@@ -36,6 +40,8 @@ class Nave:
         self.vida_maxima = VIDA_NAVE
         self.vida = self.vida_maxima
         self.municiones_basicas = []
+        self.intervalo_disparo_basico = INTERVALO_DISPARO_BASICO
+        self.espera_disparo_basico = 0
         self.lanzador_conica = LanzadorConica()
         self.municiones_parabolicas = []
         self.maximo_parabolicas = MAXIMO_PARABOLICAS
@@ -45,6 +51,8 @@ class Nave:
         self.recargando_parabolicas = False
         self.tecla_parabolica_pulsada = False
         self.dano_por_enemigo = DANO_ENEMIGOS.copy()
+        self.duracion_destello_dano = DURACION_DESTELLO_DANO
+        self.tiempo_destello_dano = 0
 
     @property
     def viva(self):
@@ -58,6 +66,12 @@ class Nave:
         disparos = []
         if tiempo_transcurrido <= 0:
             return disparos
+        self.espera_disparo_basico = max(
+            0, self.espera_disparo_basico - tiempo_transcurrido
+        )
+        self.tiempo_destello_dano = max(
+            0, self.tiempo_destello_dano - tiempo_transcurrido
+        )
         for municion in self.municiones_basicas:
             municion.actualizar(tiempo_transcurrido)
         self.municiones_basicas = [
@@ -81,9 +95,10 @@ class Nave:
             self.y += direccion_y / longitud * distancia
         self.x = max(0, min(self.x, self.ancho_mapa - self.ancho))
         self.y = max(0, min(self.y, self.alto_mapa - self.alto))
-        if teclas[pygame.K_SPACE]:
+        if teclas[pygame.K_SPACE] and self.espera_disparo_basico <= 0:
             if self.disparar_basica():
                 disparos.append("basica")
+                self.espera_disparo_basico = self.intervalo_disparo_basico
         if teclas[pygame.K_c]:
             if self.lanzador_conica.disparar(self.x + self.ancho / 2, self.y):
                 disparos.append("conica")
@@ -130,8 +145,11 @@ class Nave:
             self.tiempo_recarga_parabolica = 0
 
     def recibir_impacto(self, tipo_enemigo):
-        dano = self.dano_por_enemigo[tipo_enemigo]
+        self.recibir_dano(self.dano_por_enemigo[tipo_enemigo])
+
+    def recibir_dano(self, dano):
         self.vida = max(0, self.vida - dano)
+        self.tiempo_destello_dano = self.duracion_destello_dano
 
     def dibujar(self, pantalla):
         for municion in self.municiones_basicas:
@@ -141,7 +159,12 @@ class Nave:
             municion.dibujar(pantalla)
         if not self.viva:
             return
-        pantalla.blit(self.imagen, self.rect)
+        mostrar_dano = (
+            self.tiempo_destello_dano > 0
+            and int(self.tiempo_destello_dano * 24) % 2 == 0
+        )
+        imagen = self.imagen_dano if mostrar_dano else self.imagen
+        pantalla.blit(imagen, self.rect)
 
     def dibujar_vida(self, pantalla):
         ancho_barra = min(160, self.ancho_mapa - 20)

@@ -72,7 +72,9 @@ def main():
             disparos = nave.actualizar(pygame.key.get_pressed(), dt)
             for tipo_disparo in disparos:
                 sonido.reproducir_disparo(tipo_disparo)
-            gestor_oleadas.actualizar(dt)
+            disparos_enemigos = gestor_oleadas.actualizar(dt)
+            for tipo_disparo in disparos_enemigos:
+                sonido.reproducir_disparo(tipo_disparo)
             vida_anterior = nave.vida
             gestor_colisiones.actualizar(nave, gestor_oleadas.enemigos)
             if nave.vida < vida_anterior:

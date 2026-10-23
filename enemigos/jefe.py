@@ -1,9 +1,17 @@
 import math
+import random
 from pathlib import Path
 
 import pygame
 
-from config import IMPACTOS_PARA_ELIMINAR, VIDA_ENEMIGOS
+from config import (
+    DANO_BALA_JEFE,
+    IMPACTOS_PARA_ELIMINAR,
+    INTERVALO_MAX_DISPARO_JEFE,
+    INTERVALO_MIN_DISPARO_JEFE,
+    VIDA_ENEMIGOS,
+)
+from municiones.basica import MunicionBasicaEnemiga
 
 
 class Jefe:
@@ -35,6 +43,10 @@ class Jefe:
         self.vida_maxima = VIDA_ENEMIGOS[self.tipo]
         self.vida = self.vida_maxima
         self.dano_por_municion = self.calcular_dano_por_municion()
+        self.municiones = []
+        self.tiempo_hasta_disparo = random.uniform(
+            INTERVALO_MIN_DISPARO_JEFE, INTERVALO_MAX_DISPARO_JEFE
+        )
 
     def calcular_dano_por_municion(self):
         dano_por_municion = {}
@@ -64,17 +76,38 @@ class Jefe:
         return nuevo_tiempo, self.calcular_posicion(nuevo_tiempo)
 
     def actualizar(self, tiempo_transcurrido, otros_enemigos=()):
+        for municion in self.municiones:
+            municion.actualizar(tiempo_transcurrido)
+        self.municiones = [municion for municion in self.municiones if municion.activa]
         if not self.vivo or tiempo_transcurrido <= 0:
-            return
+            return False
+        self.tiempo_hasta_disparo -= tiempo_transcurrido
+        disparo_realizado = False
+        if self.tiempo_hasta_disparo <= 0:
+            self.disparar()
+            self.tiempo_hasta_disparo = random.uniform(
+                INTERVALO_MIN_DISPARO_JEFE, INTERVALO_MAX_DISPARO_JEFE
+            )
+            disparo_realizado = True
         nuevo_tiempo, (nueva_x, nueva_y) = self.calcular_movimiento(tiempo_transcurrido)
         if self.choca_con(nueva_x, nueva_y, otros_enemigos):
             self.direccion *= -1
             nuevo_tiempo, (nueva_x, nueva_y) = self.calcular_movimiento(tiempo_transcurrido)
             if self.choca_con(nueva_x, nueva_y, otros_enemigos):
-                return
+                return disparo_realizado
         self.tiempo = nuevo_tiempo
         self.x = nueva_x
         self.y = nueva_y
+        return disparo_realizado
+
+    def disparar(self):
+        margen = self.ancho * 0.2
+        centro_x = random.uniform(self.x + margen, self.x + self.ancho - margen)
+        municion = MunicionBasicaEnemiga(
+            centro_x, self.y + self.alto, self.alto_mapa, DANO_BALA_JEFE
+        )
+        self.municiones.append(municion)
+        return municion
 
     def choca_con(self, x, y, otros_enemigos):
         rect_nuevo = pygame.Rect(round(x), round(y), self.ancho, self.alto)
@@ -89,6 +122,8 @@ class Jefe:
         self.vida = max(0, self.vida - dano)
 
     def dibujar(self, pantalla):
+        for municion in self.municiones:
+            municion.dibujar(pantalla)
         if not self.vivo:
             return
         pantalla.blit(self.imagen, self.rect)

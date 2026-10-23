@@ -1,4 +1,7 @@
 import random
+
+import pygame
+
 from config import (
     ANCHO,
     MARGEN_APARICION,
@@ -20,6 +23,7 @@ class GestorOleadas:
         self.pendientes = []
         self.temporizador = 0.0
         self.estado = "oleada"
+        self.fuente_indicador = None
         self.avanzar()
 
     @property
@@ -73,7 +77,9 @@ class GestorOleadas:
 
     def actualizar(self, dt):
         if self.terminado:
-            return
+            return []
+
+        disparos = []
 
         self.temporizador += dt
         if self.pendientes and self.temporizador >= INTERVALO_APARICION:
@@ -82,7 +88,8 @@ class GestorOleadas:
                 self.pendientes.pop(0)
 
         for enemigo in self.enemigos:
-            enemigo.actualizar(dt, self.enemigos)
+            if enemigo.actualizar(dt, self.enemigos):
+                disparos.append("basica")
             self.mantener_dentro(enemigo)
 
         self.enemigos = [e for e in self.enemigos if e.vida > 0]
@@ -90,7 +97,27 @@ class GestorOleadas:
 
         if not self.pendientes and not self.enemigos:
             self.avanzar()
+        return disparos
 
     def dibujar(self, pantalla):
         for enemigo in self.enemigos:
             enemigo.dibujar(pantalla)
+        self.dibujar_indicador(pantalla)
+
+    def dibujar_indicador(self, pantalla):
+        if self.estado == "victoria":
+            return
+        if self.estado == "jefe":
+            texto = "JEFE"
+            color = (240, 80, 90)
+        else:
+            texto = f"OLEADA {self.numero_oleada} / {len(OLEADAS)}"
+            color = (225, 230, 255)
+        if self.fuente_indicador is None:
+            self.fuente_indicador = pygame.font.Font(None, 30)
+        imagen = self.fuente_indicador.render(texto, True, color)
+        rect = imagen.get_rect(topright=(pantalla.get_width() - 14, 12))
+        fondo = rect.inflate(18, 10)
+        pygame.draw.rect(pantalla, (20, 20, 45), fondo, border_radius=6)
+        pygame.draw.rect(pantalla, color, fondo, 1, border_radius=6)
+        pantalla.blit(imagen, rect)

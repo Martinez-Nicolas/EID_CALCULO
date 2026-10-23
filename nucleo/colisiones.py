@@ -31,6 +31,17 @@ class GestorColisiones:
                     nave.recibir_impacto(enemigo.tipo)
         self.contactos_nave = contactos_actuales
 
+    def procesar_municiones_enemigas(self, nave, enemigos):
+        if not nave.viva:
+            return
+        for enemigo in enemigos:
+            for municion in getattr(enemigo, "municiones", ()):
+                if municion.activa and municion.rect.colliderect(nave.rect):
+                    nave.recibir_dano(municion.dano)
+                    municion.activa = False
+                    return
+
     def actualizar(self, nave, enemigos):
         self.procesar_municiones(nave, enemigos)
+        self.procesar_municiones_enemigas(nave, enemigos)
         self.procesar_nave(nave, enemigos)
