@@ -1,12 +1,11 @@
-from pathlib import Path
-
 import pygame
 
 
 class GestorSonido:
     def __init__(self):
-        self.carpeta = Path(__file__).resolve().parent.parent / "assets"
+        self.carpeta = "assets"
         self.sonidos = {}
+        self.ultimo_sonido_basico = -1000
         if not pygame.mixer.get_init():
             return
         archivos = {
@@ -18,7 +17,7 @@ class GestorSonido:
         for nombre, archivo in archivos.items():
             try:
                 self.sonidos[nombre] = pygame.mixer.Sound(
-                    str(self.carpeta / archivo)
+                    f"{self.carpeta}/{archivo}"
                 )
             except pygame.error:
                 pass
@@ -33,6 +32,11 @@ class GestorSonido:
                 self.sonidos[nombre].set_volume(volumen)
 
     def reproducir_disparo(self, tipo):
+        if tipo == "basica":
+            ahora = pygame.time.get_ticks()
+            if ahora - self.ultimo_sonido_basico < 70:
+                return
+            self.ultimo_sonido_basico = ahora
         sonido = self.sonidos.get(tipo)
         if sonido:
             sonido.play()
@@ -51,7 +55,7 @@ class GestorSonido:
             "derrota": "musica_derrota.wav",
         }
         try:
-            pygame.mixer.music.load(str(self.carpeta / archivos[estado]))
+            pygame.mixer.music.load(f"{self.carpeta}/{archivos[estado]}")
             pygame.mixer.music.set_volume(0.25)
             pygame.mixer.music.play(-1)
         except pygame.error:
@@ -60,3 +64,13 @@ class GestorSonido:
     def detener_musica(self):
         if pygame.mixer.get_init():
             pygame.mixer.music.stop()
+
+    def pausar(self):
+        if pygame.mixer.get_init():
+            pygame.mixer.pause()
+            pygame.mixer.music.pause()
+
+    def reanudar(self):
+        if pygame.mixer.get_init():
+            pygame.mixer.unpause()
+            pygame.mixer.music.unpause()

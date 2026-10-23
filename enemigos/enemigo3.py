@@ -1,5 +1,4 @@
 import math
-from pathlib import Path
 
 import pygame
 
@@ -7,9 +6,8 @@ from config import IMPACTOS_PARA_ELIMINAR, VIDA_ENEMIGOS
 
 
 class Enemigo3:
-    def __init__(self, ancho_mapa, alto_mapa, x_inicial, altura_central, fase=0, direccion=1):
-        ruta_imagen = Path(__file__).resolve().parent.parent / "assets" / "Enemigo-3.png"
-        imagen = pygame.image.load(str(ruta_imagen)).convert_alpha()
+    def __init__(self, ancho_mapa, alto_mapa, x_inicial, altura_central, fase=math.pi / 2, direccion=1):
+        imagen = pygame.image.load("assets/Enemigo-3.png").convert_alpha()
         regiones = pygame.mask.from_surface(imagen).get_bounding_rects()
         area_enemigo = max(regiones, key=lambda rect: rect.width * rect.height)
         imagen = imagen.subsurface(area_enemigo)
@@ -24,13 +22,9 @@ class Enemigo3:
         self.amplitud = 60
         self.frecuencia = 2 * math.pi / 160
         self.fase = fase
-        self.altura_minima = self.amplitud
-        self.altura_maxima = max(self.altura_minima, alto_mapa // 2 - self.alto)
-        self.altura_central = max(self.altura_minima, min(altura_central, self.altura_maxima))
-        self.altura_objetivo = self.altura_central
-        self.paso_fila = 50
-        self.sentido_vertical = 1
-        self.velocidad_vertical = 60
+        altura_minima = self.amplitud
+        altura_maxima = max(altura_minima, alto_mapa // 2 - self.alto)
+        self.altura_central = max(altura_minima, min(altura_central, altura_maxima))
         self.x = max(0, min(x_inicial, ancho_mapa - self.ancho))
         self.y = self.calcular_y(self.x)
         self.direccion = 1 if direccion >= 0 else -1
@@ -57,41 +51,19 @@ class Enemigo3:
     def calcular_y(self, x):
         return self.amplitud * math.sin(self.frecuencia * x + self.fase) + self.altura_central
 
-    def cambiar_fila(self):
-        self.altura_objetivo += self.sentido_vertical * self.paso_fila
-        if self.altura_objetivo >= self.altura_maxima:
-            self.altura_objetivo = self.altura_maxima
-            self.sentido_vertical = -1
-        elif self.altura_objetivo <= self.altura_minima:
-            self.altura_objetivo = self.altura_minima
-            self.sentido_vertical = 1
-
-    def acercar_altura(self, tiempo_transcurrido):
-        diferencia = self.altura_objetivo - self.altura_central
-        paso = self.velocidad_vertical * tiempo_transcurrido
-        if abs(diferencia) <= paso:
-            self.altura_central = self.altura_objetivo
-        elif diferencia > 0:
-            self.altura_central += paso
-        else:
-            self.altura_central -= paso
-
     def calcular_movimiento(self, tiempo_transcurrido):
         nueva_x = self.x + self.direccion * self.velocidad * tiempo_transcurrido
         if nueva_x <= 0:
             nueva_x = 0
             self.direccion = 1
-            self.cambiar_fila()
         elif nueva_x >= self.ancho_mapa - self.ancho:
             nueva_x = self.ancho_mapa - self.ancho
             self.direccion = -1
-            self.cambiar_fila()
         return nueva_x, self.calcular_y(nueva_x)
 
     def actualizar(self, tiempo_transcurrido, otros_enemigos=()):
         if not self.vivo or tiempo_transcurrido <= 0:
             return
-        self.acercar_altura(tiempo_transcurrido)
         nueva_x, nueva_y = self.calcular_movimiento(tiempo_transcurrido)
         if self.choca_con(nueva_x, nueva_y, otros_enemigos):
             self.direccion *= -1

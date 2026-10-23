@@ -1,6 +1,5 @@
 import math
 import random
-from pathlib import Path
 
 import pygame
 
@@ -15,9 +14,8 @@ from municiones.basica import MunicionBasicaEnemiga
 
 
 class Jefe:
-    def __init__(self, ancho_mapa, alto_mapa, fase=0):
-        ruta_imagen = Path(__file__).resolve().parent.parent / "assets" / "Jefe-Final.png"
-        imagen = pygame.image.load(str(ruta_imagen)).convert_alpha()
+    def __init__(self, ancho_mapa, alto_mapa, fase=3 * math.pi / 4):
+        imagen = pygame.image.load("assets/Jefe-Final.png").convert_alpha()
         regiones = pygame.mask.from_surface(imagen).get_bounding_rects()
         area_jefe = max(regiones, key=lambda rect: rect.width * rect.height)
         imagen = imagen.subsurface(area_jefe)

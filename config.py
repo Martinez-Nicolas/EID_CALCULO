@@ -15,10 +15,10 @@ DANO_ENEMIGOS = {
     "jefe": 100,
 }
 IMPACTOS_PARA_ELIMINAR = {
-    "enemigo1": {"basica": 6, "parabolica": 2, "conica": 1},
-    "enemigo2": {"basica": 12, "parabolica": 3, "conica": 2},
-    "enemigo3": {"basica": 18, "parabolica": 5, "conica": 3},
-    "jefe": {"basica": 36, "parabolica": 9, "conica": 4},
+    "enemigo1": {"basica": 30, "parabolica": 2, "conica": 1},
+    "enemigo2": {"basica": 60, "parabolica": 3, "conica": 2},
+    "enemigo3": {"basica": 90, "parabolica": 5, "conica": 3},
+    "jefe": {"basica": 180, "parabolica": 9, "conica": 4},
 }
 VIDA_ENEMIGOS = {
     "enemigo1": 30,
@@ -26,10 +26,15 @@ VIDA_ENEMIGOS = {
     "enemigo3": 90,
     "jefe": 180,
 }
+PUNTOS_ENEMIGOS = {
+    "enemigo1": 100,
+    "enemigo2": 250,
+    "enemigo3": 500,
+    "jefe": 2000,
+}
 
 MAXIMO_PARABOLICAS = 3
 COOLDOWN_PARABOLICA = 10.0
-INTERVALO_DISPARO_BASICO = 0.125
 DURACION_DESTELLO_DANO = 0.35
 DANO_BALA_JEFE = 15
 INTERVALO_MIN_DISPARO_JEFE = 0.8

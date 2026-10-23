@@ -10,6 +10,7 @@ class GestorColisiones:
         )
 
     def procesar_municiones(self, nave, enemigos):
+        eliminados = []
         for municion in self.obtener_municiones(nave):
             if not municion.activa:
                 continue
@@ -17,7 +18,10 @@ class GestorColisiones:
                 if enemigo.vida > 0 and municion.rect.colliderect(enemigo.rect):
                     enemigo.recibir_impacto(municion.tipo)
                     municion.activa = False
+                    if enemigo.vida <= 0:
+                        eliminados.append(enemigo)
                     break
+        return eliminados
 
     def procesar_nave(self, nave, enemigos):
         contactos_actuales = set()
@@ -42,6 +46,7 @@ class GestorColisiones:
                     return
 
     def actualizar(self, nave, enemigos):
-        self.procesar_municiones(nave, enemigos)
+        eliminados = self.procesar_municiones(nave, enemigos)
         self.procesar_municiones_enemigas(nave, enemigos)
         self.procesar_nave(nave, enemigos)
+        return eliminados

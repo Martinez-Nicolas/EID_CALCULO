@@ -24,6 +24,8 @@ class GestorOleadas:
         self.temporizador = 0.0
         self.estado = "oleada"
         self.fuente_indicador = None
+        self.fuente_transicion = None
+        self.tiempo_mensaje = 0
         self.avanzar()
 
     @property
@@ -54,6 +56,7 @@ class GestorOleadas:
             self.pendientes = []
             self.estado = "victoria"
         self.temporizador = INTERVALO_APARICION - PAUSA_ENTRE_OLEADAS
+        self.tiempo_mensaje = PAUSA_ENTRE_OLEADAS if not self.terminado else 0
 
     def aparecer(self, tipo):
         if tipo == "jefe":
@@ -80,6 +83,7 @@ class GestorOleadas:
             return []
 
         disparos = []
+        self.tiempo_mensaje = max(0, self.tiempo_mensaje - dt)
 
         self.temporizador += dt
         if self.pendientes and self.temporizador >= INTERVALO_APARICION:
@@ -103,6 +107,7 @@ class GestorOleadas:
         for enemigo in self.enemigos:
             enemigo.dibujar(pantalla)
         self.dibujar_indicador(pantalla)
+        self.dibujar_transicion(pantalla)
 
     def dibujar_indicador(self, pantalla):
         if self.estado == "victoria":
@@ -120,4 +125,18 @@ class GestorOleadas:
         fondo = rect.inflate(18, 10)
         pygame.draw.rect(pantalla, (20, 20, 45), fondo, border_radius=6)
         pygame.draw.rect(pantalla, color, fondo, 1, border_radius=6)
+        pantalla.blit(imagen, rect)
+
+    def dibujar_transicion(self, pantalla):
+        if self.tiempo_mensaje <= 0 or self.terminado:
+            return
+        texto = "JEFE FINAL" if self.estado == "jefe" else f"OLEADA {self.numero_oleada}"
+        color = (255, 90, 100) if self.estado == "jefe" else (225, 230, 255)
+        if self.fuente_transicion is None:
+            self.fuente_transicion = pygame.font.Font(None, 72)
+        imagen = self.fuente_transicion.render(texto, True, color)
+        rect = imagen.get_rect(center=(pantalla.get_width() // 2, pantalla.get_height() // 2))
+        fondo = rect.inflate(36, 24)
+        pygame.draw.rect(pantalla, (10, 10, 30), fondo, border_radius=10)
+        pygame.draw.rect(pantalla, color, fondo, 2, border_radius=10)
         pantalla.blit(imagen, rect)

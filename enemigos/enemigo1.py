@@ -1,5 +1,4 @@
 import math
-from pathlib import Path
 
 import pygame
 
@@ -8,8 +7,7 @@ from config import IMPACTOS_PARA_ELIMINAR, VIDA_ENEMIGOS
 
 class Enemigo1:
     def __init__(self, ancho_mapa, alto_mapa, x_inicial, altura_central, fase=0, direccion=1):
-        ruta_imagen = Path(__file__).resolve().parent.parent / "assets" / "Enemigo-1.png"
-        imagen = pygame.image.load(str(ruta_imagen)).convert_alpha()
+        imagen = pygame.image.load("assets/Enemigo-1.png").convert_alpha()
         regiones = pygame.mask.from_surface(imagen).get_bounding_rects()
         area_enemigo = max(regiones, key=lambda rect: rect.width * rect.height)
         imagen = imagen.subsurface(area_enemigo)
