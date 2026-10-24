@@ -30,7 +30,7 @@ class Jefe:
         self.tipo = "jefe"
         self.amplitud_x = (ancho_mapa - self.ancho) / 2 - self.margen
         self.centro_x = (ancho_mapa - self.ancho) / 2
-        self.amplitud_y = 40
+        self.amplitud_y = 160
         self.centro_y = self.amplitud_y + self.margen
         self.frecuencia = 2 * math.pi / 8
         self.fase = fase

@@ -14,13 +14,13 @@ class Enemigo1:
         self.ancho = 70
         self.alto = round(self.ancho * imagen.get_height() / imagen.get_width())
         if ancho_mapa < self.ancho or alto_mapa < self.alto:
-            raise ValueError("El mapa debe ser suficientemente grande para el enemigo")
+            raise ValueError("El mapa debe ser mas grande para el enemigo")
         self.imagen = pygame.transform.smoothscale(imagen, (self.ancho, self.alto))
         self.ancho_mapa = ancho_mapa
         self.alto_mapa = alto_mapa
         self.tipo = "enemigo1"
-        self.amplitud = 40
-        self.frecuencia = 2 * math.pi / 300
+        self.amplitud = 180
+        self.frecuencia = 2 * math.pi / 600
         self.fase = fase
         altura_minima = self.amplitud
         altura_maxima = alto_mapa - self.alto - self.amplitud

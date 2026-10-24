@@ -19,11 +19,11 @@ class Enemigo3:
         self.ancho_mapa = ancho_mapa
         self.alto_mapa = alto_mapa
         self.tipo = "enemigo3"
-        self.amplitud = 60
-        self.frecuencia = 2 * math.pi / 160
+        self.amplitud = 200
+        self.frecuencia = 2 * math.pi / 600
         self.fase = fase
         altura_minima = self.amplitud
-        altura_maxima = max(altura_minima, alto_mapa // 2 - self.alto)
+        altura_maxima = max(altura_minima, alto_mapa - self.alto - self.amplitud)
         self.altura_central = max(altura_minima, min(altura_central, altura_maxima))
         self.x = max(0, min(x_inicial, ancho_mapa - self.ancho))
         self.y = self.calcular_y(self.x)

@@ -17,9 +17,9 @@ from nave.nave import Nave
 def crear_partida(mapa):
     nave = Nave(ANCHO, ALTO)
     fabricas = {
-        1: lambda x, y: Enemigo1(ANCHO, ALTO, x, 170),
+        1: lambda x, y: Enemigo1(ANCHO, ALTO, x, 280),
         2: lambda x, y: Enemigo2(ANCHO, ALTO, x),
-        3: lambda x, y: Enemigo3(ANCHO, ALTO, x, 120),
+        3: lambda x, y: Enemigo3(ANCHO, ALTO, x, 300),
         "jefe": lambda x, y: Jefe(ANCHO, ALTO),
     }
     gestor_oleadas = GestorOleadas(mapa, fabricas)

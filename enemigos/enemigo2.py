@@ -26,7 +26,7 @@ class Enemigo2:
         columna_maxima = ancho_mapa - self.ancho - self.amplitud
         self.columna_central = max(columna_minima, min(x_central, columna_maxima))
         self.y_minima = 0
-        self.y_maxima = max(0, alto_mapa // 2 - self.alto)
+        self.y_maxima = max(0, alto_mapa - self.alto)
         self.y = self.y_minima
         self.x = self.calcular_x(self.y)
         self.direccion = 1
